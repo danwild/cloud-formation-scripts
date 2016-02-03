@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "AWS CloudFormation Sample Template ELBWithLockedDownAutoScaledInstances: Create a load balanced, Auto Scaled sample website where the instances are locked down to only accept traffic from the load balancer. This example creates an Auto Scaling group behind a load balancer with a simple health check. The web site is available on port 80, however, the instances can be configured to listen on any port (8888 by default). **WARNING** This template creates one or more Amazon EC2 instances and an Elastic Load Balancer. You will be billed for the AWS resources used if you create a stack from this template.",
+  "Description": "Pull in static/pre-compiled project archive from an S3 bucket",
   "Parameters": {
     "InstanceType": {
       "Description": "WebServer EC2 instance type",
@@ -540,35 +540,20 @@
           "config": {
             "packages": {
               "yum": {
-                "httpd": []
+                "httpd": [],
+				"nodejs": []
               }
             },
             "files": {
-              "/var/www/html/index.html": {
-                "content": {
-                  "Fn::Join": [
-                    "\n",
-                    [
-                      "<img src=\"",
-                      {
-                        "Fn::FindInMap": [
-                          "Region2Examples",
-                          {
-                            "Ref": "AWS::Region"
-                          },
-                          "Examples"
-                        ]
-                      },
-                      "/cloudformation_graphic.png\" alt=\"AWS CloudFormation Logo\"/>",
-                      "<h1>Congratulations, you have successfully launched the AWS CloudFormation sample.</h1>"
-                    ]
-                  ]
-                },
-                "mode": "000644",
-                "owner": "root",
-                "group": "root"
-              },
-              "/etc/cfn/cfn-hup.conf": {
+
+			  "/etc" : {
+				"content" : "",
+				"mode"    : "000644",
+				"owner"   : "root",
+				"group"   : "root"
+			  },
+
+			  "/etc/cfn/cfn-hup.conf": {
                 "content": {
                   "Fn::Join": [
                     "",
@@ -618,10 +603,9 @@
             },
             "services": {
               "sysvinit": {
-                "httpd": {
-                  "enabled": "true",
-                  "ensureRunning": "true"
-                },
+				"nodejs": {
+				  "enabled": "true"
+				},
                 "cfn-hup": {
                   "enabled": "true",
                   "ensureRunning": "true",
@@ -631,7 +615,17 @@
                   ]
                 }
               }
-            }
+            },
+
+
+			"commands" : {
+
+			  "0" : {
+				"command" : "node app.js",
+				"cwd" : "/etc/myapp/node-working",
+				"ignoreErrors" : "false"
+			  }
+			}
           }
         },
         "AWS::CloudFormation::Designer": {
@@ -711,13 +705,13 @@
         "CrossZone": "true",
         "Listeners": [
           {
-            "LoadBalancerPort": "80",
-            "InstancePort": "80",
+            "LoadBalancerPort": "3000",
+            "InstancePort": "3000",
             "Protocol": "HTTP"
           }
         ],
         "HealthCheck": {
-          "Target": "HTTP:80/",
+          "Target": "HTTP:3000/",
           "HealthyThreshold": "3",
           "UnhealthyThreshold": "5",
           "Interval": "30",
@@ -738,7 +732,7 @@
           {
             "IpProtocol": "tcp",
             "FromPort": "80",
-            "ToPort": "80",
+            "ToPort": "3000",
             "SourceSecurityGroupOwnerId": {
               "Fn::GetAtt": [
                 "ElasticLoadBalancer",
@@ -808,7 +802,7 @@
           "height": 60
         },
         "position": {
-          "x": 180,
+          "x": 13000,
           "y": 90
         },
         "z": 1,
@@ -838,7 +832,7 @@
           "height": 60
         },
         "position": {
-          "x": 180,
+          "x": 13000,
           "y": 210
         },
         "z": 1,
