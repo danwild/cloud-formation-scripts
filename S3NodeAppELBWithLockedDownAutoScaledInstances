@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "Where's my elephant?!",
+  "Description" : "Deploy a node app from an archive file (e.g. S3 bucket) to a load-balanced, auto-scaling group",
 
   "Parameters" : {
 	"InstanceType" : {
@@ -201,7 +201,7 @@
 	"LaunchConfig" : {
 	  "Type" : "AWS::AutoScaling::LaunchConfiguration",
 	  "Metadata" : {
-		"Comment" : "Install a simple application",
+		"Comment" : "Install a simple node application",
 		"AWS::CloudFormation::Init" : {
 		  "config" : {
 			"packages" : {},
@@ -313,7 +313,8 @@
 		  "UnhealthyThreshold" : "5",
 		  "Interval" : "30",
 		  "Timeout" : "5"
-		}
+		},
+		"SecurityGroups": [{"Fn::GetAtt" : [ "RestrictedSecurityGroup", "GroupId" ]}]
 	  }
 	},
 
@@ -334,7 +335,29 @@
 		  "CidrIp" : { "Ref" : "SSHLocation"}
 		} ]
 	  }
+	},
+
+	"RestrictedSecurityGroup" : {
+	  "Type" : "AWS::EC2::SecurityGroup",
+	  "Properties" : {
+		"GroupDescription" : "Open up HTTP port for restricted IP",
+		"SecurityGroupIngress" : [
+		  {
+			"IpProtocol": "tcp",
+			"FromPort": "80",
+			"ToPort": "80",
+			"CidrIp": "175.32.108.235/32"
+		  },
+		  {
+			"IpProtocol" : "tcp",
+			"FromPort" : "22",
+			"ToPort" : "22",
+			"CidrIp" : { "Ref" : "SSHLocation"}
+		  }
+		]
+	  }
 	}
+
   },
 
   "Outputs" : {
