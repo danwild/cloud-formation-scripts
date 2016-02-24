@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "Sets up a stack with a load-balanced, auto-scaling group and CodeDeploy Continuous Deployment config for integration with Jenkins CI",
+  "Description" : "Sets up a stack with a load-balanced, auto-scaling group and CodeDeploy Continuous Deployment config with two IAM Roles for integration with Jenkins CI",
 
   "Parameters" : {
 	"InstanceType" : {
@@ -300,7 +300,7 @@
 		  "         --resource WebServerGroup ",
 		  "         --region ", { "Ref" : "AWS::Region" }, "\n"
 		]]}},
-		"IamInstanceProfile": "EC2CodeDeployRole"
+		"IamInstanceProfile": {"Fn::GetAtt" : ["MyEC2CodeDeployRoleRole", "Arn"] }
 	  }
 	},
 
@@ -391,7 +391,84 @@
 			"Type": "KEY_AND_VALUE"
 		  }
 		],
-		"ServiceRoleArn": "arn:aws:iam::821349488952:role/CodeDeployRole"
+		"ServiceRoleArn": {"Fn::GetAtt" : ["MyCodeDeployRole", "Arn"] }
+	  }
+	},
+
+	"MyCodeDeployRole":{
+	  "Type": "AWS::IAM::Role",
+	  "Properties": {
+		"AssumeRolePolicyDocument": {
+		  "Version": "2012-10-17",
+		  "Statement": [
+			{
+			  "Sid": "",
+			  "Effect": "Allow",
+			  "Principal": {
+				"Service": [
+				  "codedeploy.us-east-1.amazonaws.com",
+				  "codedeploy.us-west-2.amazonaws.com",
+				  "codedeploy.ap-southeast-2.amazonaws.com"
+				]
+			  },
+			  "Action": "sts:AssumeRole"
+			}
+		  ]
+		},
+		"Policies": [
+		  {
+			"Version": "2012-10-17",
+			"Statement": [
+			  {
+				"Action": [
+				  "autoscaling:PutLifecycleHook",
+				  "autoscaling:DeleteLifecycleHook",
+				  "autoscaling:RecordLifecycleActionHeartbeat",
+				  "autoscaling:CompleteLifecycleAction",
+				  "autoscaling:DescribeAutoscalingGroups",
+				  "autoscaling:PutInstanceInStandby",
+				  "autoscaling:PutInstanceInService",
+				  "ec2:Describe*"
+				],
+				"Effect": "Allow",
+				"Resource": "*"
+			  }
+			]
+		  }
+		]
+	  }
+	},
+
+	"MyEC2CodeDeployRole":{
+	  "Type": "AWS::IAM::Role",
+	  "Properties": {
+		"AssumeRolePolicyDocument": {
+		  "Version": "2012-10-17",
+		  "Statement": [
+			{
+			  "Effect": "Allow",
+			  "Principal": {
+				"Service": "ec2.amazonaws.com"
+			  },
+			  "Action": "sts:AssumeRole"
+			}
+		  ]
+		},
+		"Policies": [
+		  {
+			"Version": "2012-10-17",
+			"Statement": [
+			  {
+				"Action": [
+				  "s3:Get*",
+				  "s3:List*"
+				],
+				"Effect": "Allow",
+				"Resource": "*"
+			  }
+			]
+		  }
+		]
 	  }
 	}
 
