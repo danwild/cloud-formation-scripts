@@ -537,7 +537,7 @@
 	"LaunchConfig": {
 	  "Type": "AWS::AutoScaling::LaunchConfiguration",
 	  "Metadata": {
-		"Comment": "Install a simple node application",
+		"Comment": "Install CodeDeploy agent",
 		"AWS::CloudFormation::Init": {
 		  "config": {
 			"packages": {},
