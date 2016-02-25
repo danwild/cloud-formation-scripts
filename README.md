@@ -3,7 +3,7 @@
 Repo to keep track of various AWS CloudFormation scripts/templates.
 
 
-## S3NodeAppELBWithLockedDownAutoScaledInstances
+### S3NodeAppELBWithLockedDownAutoScaledInstances
 
 Very basic template. 
 
@@ -12,7 +12,7 @@ archive and runs as daemon service with node forever.
 
 
 
-## S3NodeAppELBWithLockedDownAutoScaledInstances
+### S3NodeAppELBWithLockedDownAutoScaledInstances
 
 More advanced template, to be used as part of a CI/CD Pipeline.
 The demo project used for CodeDeploy is [ci-test](https://github.com/danwild/ci-test).
