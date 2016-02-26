@@ -904,16 +904,6 @@
 		  }
 		]
 	  }
-	},
-
-	"DanWildCodeDeployS3VersionedBucket":{
-	  "Type": "AWS::S3::Bucket",
-	  "Properties": {
-		"BucketName": "danwild-codedeploy-s3-versioned-bucket",
-		"VersioningConfiguration": {
-		  "Status" : "Enabled"
-		}
-	  }
 	}
 
   },
