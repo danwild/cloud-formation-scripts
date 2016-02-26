@@ -12,7 +12,7 @@ archive and runs as daemon service with node forever.
 
 
 
-### S3NodeAppELBWithLockedDownAutoScaledInstances
+### S3CodeDeployAutoScalingELBWithRoles
 
 More advanced template, to be used as part of a CI/CD Pipeline.
 The demo project used for CodeDeploy is [ci-test](https://github.com/danwild/ci-test).
@@ -21,3 +21,7 @@ The template handles everything in the CloudFormation box below:
 
 ![Pipeline Overview](screenshots/pipeline-overview.png "Pipeline Overview")
 
+
+### CodeDeployAutoScalingELBWithRoles
+
+Like previous, except does not create S3 bucket.
