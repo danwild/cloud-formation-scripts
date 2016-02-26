@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Sets up a stack with a load-balanced, auto-scaling group and CodeDeploy Continuous Deployment config with versioned S3 bucket, and two IAM Roles for integration with Jenkins CI",
+  "Description": "Sets up a stack with a load-balanced, auto-scaling group and CodeDeploy Continuous Deployment config with versioned S3 bucket, and two IAM Roles for CI access",
   "Parameters": {
 	"InstanceType": {
 	  "Description": "WebServer EC2 instance type",
@@ -515,7 +515,7 @@
 		"Tags": [
 		  {
 			"Key": "Name",
-			"Value": "MyCodeDeployWebServers",
+			"Value": "CossapCodeDeployWebServers",
 			"PropagateAtLaunch": "true"
 		  }
 		]
@@ -690,7 +690,7 @@
 			]
 		  }
 		},
-		"IamInstanceProfile": { "Ref": "MyEC2CodeDeployInstanceProfile" }
+		"IamInstanceProfile": { "Ref": "CossapEC2CodeDeployInstanceProfile" }
 	  }
 	},
 	"ElasticLoadBalancer": {
@@ -785,33 +785,33 @@
 		]
 	  }
 	},
-	"MyCodeDeployApp": {
+	"CossapCodeDeployApp": {
 	  "Type": "AWS::CodeDeploy::Application",
 	  "Properties": {
-		"ApplicationName": "MyCodeDeployApp"
+		"ApplicationName": "CossapCodeDeployApp"
 	  }
 	},
-	"MyCodeDeployGroup": {
+	"CossapCodeDeployGroup": {
 	  "Type": "AWS::CodeDeploy::DeploymentGroup",
 	  "Properties": {
-		"ApplicationName": "MyCodeDeployApp",
-		"DeploymentGroupName": "MyCodeDeployGroup",
+		"ApplicationName": "CossapCodeDeployApp",
+		"DeploymentGroupName": "CossapCodeDeployGroup",
 		"Ec2TagFilters": [
 		  {
 			"Key": "Name",
-			"Value": "MyCodeDeployWebServers",
+			"Value": "CossapCodeDeployWebServers",
 			"Type": "KEY_AND_VALUE"
 		  }
 		],
 		"ServiceRoleArn": {
 		  "Fn::GetAtt": [
-			"MyCodeDeployRole",
+			"CossapCodeDeployRole",
 			"Arn"
 		  ]
 		}
 	  }
 	},
-	"MyCodeDeployRole": {
+	"CossapCodeDeployRole": {
 	  "Type": "AWS::IAM::Role",
 	  "Properties": {
 		"Path": "/",
@@ -834,7 +834,7 @@
 		},
 		"Policies": [
 		  {
-			"PolicyName": "MyCodeDeployRolePolicy",
+			"PolicyName": "CossapCodeDeployRolePolicy",
 			"PolicyDocument": {
 			  "Version": "2012-10-17",
 			  "Statement": [
@@ -860,16 +860,16 @@
 	},
 
 
-	"MyEC2CodeDeployInstanceProfile": {
+	"CossapEC2CodeDeployInstanceProfile": {
 	  "Type": "AWS::IAM::InstanceProfile",
 	  "Properties": {
 		"Path": "/",
-		"Roles": [ { "Ref": "MyEC2CodeDeployRole" } ]
+		"Roles": [ { "Ref": "CossapEC2CodeDeployRole" } ]
 	  }
 	},
 
 
-	"MyEC2CodeDeployRole": {
+	"CossapEC2CodeDeployRole": {
 	  "Type": "AWS::IAM::Role",
 	  "Properties": {
 		"Path": "/",
@@ -887,7 +887,7 @@
 		},
 		"Policies": [
 		  {
-			"PolicyName": "MyEC2CodeDeployRolePolicy",
+			"PolicyName": "CossapEC2CodeDeployRolePolicy",
 			"PolicyDocument": {
 			  "Version": "2012-10-17",
 			  "Statement": [
